@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useState } from "react";
 
@@ -97,9 +97,17 @@ function Header() {
 	const homeMatch = useRouteMatch("/");
 	const tvMatch = useRouteMatch("/tv");
 	// search 아이콘 클릭하면 input 태그를 활성/비활성화 하는 기능
+	// 🔻 useAnimation → 커스텀 모션 구현 hook(아래와 같이 함수 내부의 조건에 맞게 구현할 수 있다)
 	const [searchOpen, setSearchOpen] = useState(false);
-	const toggleSearch = () => setSearchOpen((prev) => !prev);
-
+	const inputAnimation = useAnimation();
+	const toggleSearch = () => {
+		if (searchOpen) {
+			inputAnimation.start({ scaleX: 0 });
+		} else {
+			inputAnimation.start({ scaleX: 1 });
+		}
+		setSearchOpen((prev) => !prev);
+	};
 	return (
 		<Wrapper>
 			<PrimaryNav>
@@ -152,7 +160,8 @@ function Header() {
 						/>
 					</motion.svg>
 					<Input
-						animate={{ scaleX: searchOpen ? 1 : 0 }}
+						animate={inputAnimation}
+						initial={{ scaleX: 0 }}
 						transition={{ type: "linear" }}
 						placeholder="Titles, People, Genres"
 					/>

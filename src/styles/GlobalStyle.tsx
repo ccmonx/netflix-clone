@@ -27,6 +27,7 @@ export const GlobalStyle = createGlobalStyle`
   box-sizing: border-box;
  }  
  body {
+  height: 120vh;
   background-color: ${(props) => props.theme.white.lighter};
   color: ${(props) => props.theme.black.lighter};
   font-family: NetflixSansRegular, sans-serif;

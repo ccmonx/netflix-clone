@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, useScroll } from "framer-motion";
 import { Link, useRouteMatch } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -11,7 +11,6 @@ const Wrapper = styled.div`
 	top: 0;
 	width: 100%;
 	padding: 20px 60px;
-	background-color: black;
 	font-size: 14px;
 `;
 
@@ -92,14 +91,31 @@ const AccountMenu = styled.div`
 	}
 `;
 
+const wrapperVariants = {
+	top: { background: "rgba(0,0,0,0.3)" },
+	scroll: { background: "rgba(0,0,0,1)" },
+};
+
 function Header() {
 	// 🔻 useRouteMatch → 표기한 경로의 정보(path, url, isExact, params)를 객체 형태로 반환한다
 	const homeMatch = useRouteMatch("/");
 	const tvMatch = useRouteMatch("/tv");
-	// search 아이콘 클릭하면 input 태그를 활성/비활성화 하는 기능
-	// 🔻 useAnimation → 커스텀 모션 구현 hook(아래와 같이 함수 내부의 조건에 맞게 구현할 수 있다)
 	const [searchOpen, setSearchOpen] = useState(false);
 	const inputAnimation = useAnimation();
+	// 🔻 useScroll → Y축 좌표 값을 반환하는 기능
+	const { scrollY } = useScroll();
+	const wrapperAnimation = useAnimation();
+	useEffect(() => {
+		scrollY.onChange(() => {
+			if (scrollY.get() > 80) {
+				wrapperAnimation.start("scroll");
+			} else {
+				wrapperAnimation.start("top");
+			}
+		});
+	}, [scrollY, wrapperAnimation]);
+	// search 아이콘 클릭하면 input 태그를 활성/비활성화 하는 기능
+	// 🔻 useAnimation → 커스텀 모션 구현 hook(아래와 같이 함수 내부의 조건에 맞게 구현할 수 있다)
 	const toggleSearch = () => {
 		if (searchOpen) {
 			inputAnimation.start({ scaleX: 0 });
@@ -109,7 +125,11 @@ function Header() {
 		setSearchOpen((prev) => !prev);
 	};
 	return (
-		<Wrapper>
+		<Wrapper
+			variants={wrapperVariants}
+			initial={"top"}
+			animate={wrapperAnimation}
+		>
 			<PrimaryNav>
 				<Logo
 					whileHover={{ scale: 1.1 }}

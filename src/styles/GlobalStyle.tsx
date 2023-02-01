@@ -29,7 +29,7 @@ export const GlobalStyle = createGlobalStyle`
  body {
   background-color: ${(props) => props.theme.white.lighter};
   color: ${(props) => props.theme.black.lighter};
-  font-family: NetflixSansMedium, sans-serif;
+  font-family: NetflixSansRegular, sans-serif;
   line-height: 1.4;
  }
  a {

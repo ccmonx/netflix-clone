@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { motion } from "framer-motion";
 
 const Wrapper = styled.div`
 	display: flex;
@@ -23,7 +24,7 @@ const SecondaryNav = styled.div`
 	gap: 23px;
 `;
 
-const Logo = styled.svg`
+const Logo = styled(motion.svg)`
 	width: 95px;
 	height: 25px;
 	margin-right: 45px;
@@ -64,6 +65,9 @@ function Header() {
 		<Wrapper>
 			<PrimaryNav>
 				<Logo
+					whileHover={{ scale: 1.1 }}
+					whileTap={{ scale: 0.9 }}
+					transition={{ type: "spring", stiffness: 400, damping: 10 }}
 					width="1024"
 					height="276.742"
 					viewBox="0 0 1024 276.742"

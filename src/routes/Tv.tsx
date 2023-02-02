@@ -1,5 +1,5 @@
 function Tv() {
-	return <div>Tv Shows</div>;
+	return <div></div>;
 }
 
 export default Tv;

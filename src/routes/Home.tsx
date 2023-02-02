@@ -73,13 +73,13 @@ const Button = styled.button`
 
 const rowVariants = {
 	hidden: {
-		x: window.outerWidth + 10,
+		x: window.outerWidth,
 	},
 	visible: {
 		x: 0,
 	},
 	exit: {
-		x: -window.outerWidth - 10,
+		x: -window.outerWidth,
 	},
 };
 
@@ -102,9 +102,23 @@ function Home() {
 	 * 3. 애니메이션 효과를 적용한다
 	 * - AnimatePresence   : 컴포넌트가 렌더링되거나 destory될 때 효과를 주는 기능
 	 * - window.outerWidth : 화면의 크기 측정
+	 *
+	 * 🔻 onExitComplete : exit가 종료되면 실행되는 기능
+	 * 애니메이션이 실행 도중 또 실행되는 경우 모션이 중첩되어 발생하는 버그 방지
+	 * - [false]: 실행 || [true]: 실행제한
+	 * - [순서 : false → true → false]
+	 * 1. false 기본값으로 하는 boolean props를 만든다
+	 * 2. 애니메이션을 작동하는 함수가 실행되면 true로 변경
+	 * 3. true → false로 변경하는 함수를 onExitComplete에 연결
 	 */
 	const [index, setIndex] = useState(0);
-	const increaseIndex = () => setIndex((prev) => prev + 1);
+	const [leaving, setLeaving] = useState(false);
+	const increaseIndex = () => {
+		if (leaving) return;
+		setLeaving(true);
+		setIndex((prev) => prev + 1);
+	};
+	const toggleLeaving = () => setLeaving((prev) => !prev);
 
 	return (
 		<Wrapper>
@@ -122,7 +136,7 @@ function Home() {
 						<Overview>{data?.results[0].overview}</Overview>
 					</Banner>
 					<Slider>
-						<AnimatePresence>
+						<AnimatePresence onExitComplete={toggleLeaving}>
 							<Row
 								key={index}
 								variants={rowVariants}

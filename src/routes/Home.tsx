@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 import styled from "styled-components";
 import { getMoives, IGetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
@@ -41,6 +43,46 @@ const Overview = styled.p`
 	text-shadow: 2px 2px 4px rgb(0 0 0 / 45%);
 `;
 
+const Slider = styled.div`
+	position: relative;
+	top: -100px;
+`;
+
+const Row = styled(motion.div)`
+	display: grid;
+	position: absolute;
+	grid-template-columns: repeat(6, 1fr);
+	width: 100%;
+	padding: 0 60px;
+	gap: 10px;
+`;
+
+const Box = styled.div`
+	height: 200px;
+	background-color: white;
+	color: ${(props) => props.theme.red};
+	font-size: 50px;
+`;
+
+const Button = styled.button`
+	/* display: flex; */
+	/* width: 60px; */
+	height: 200px;
+	background-color: pink;
+`;
+
+const rowVariants = {
+	hidden: {
+		x: window.outerWidth + 10,
+	},
+	visible: {
+		x: 0,
+	},
+	exit: {
+		x: -window.outerWidth - 10,
+	},
+};
+
 function Home() {
 	/**
 	 * 🔻 react-query를 사용하여 API Data 불러오기
@@ -53,20 +95,49 @@ function Home() {
 		["movies", "nowPlaying"],
 		getMoives
 	);
-	console.log(data, isLoading);
+	/**
+	 * 🔻 Slider & Animation
+	 * 1. Row index 할당한다 : Row 1 = Box 6
+	 * 2. index를 증가시키는 클릭 이벤트 함수를 만든다
+	 * 3. 애니메이션 효과를 적용한다
+	 * - AnimatePresence   : 컴포넌트가 렌더링되거나 destory될 때 효과를 주는 기능
+	 * - window.outerWidth : 화면의 크기 측정
+	 */
+	const [index, setIndex] = useState(0);
+	const increaseIndex = () => setIndex((prev) => prev + 1);
+
 	return (
 		<Wrapper>
 			{isLoading ? (
 				<Loader>Loading...</Loader>
 			) : (
-				<Banner
-					bgPhoto={makeImagePath(
-						data?.results[0].backdrop_path || ""
-					)}
-				>
-					<Title>{data?.results[0].title}</Title>
-					<Overview>{data?.results[0].overview}</Overview>
-				</Banner>
+				<>
+					<Banner
+						onClick={increaseIndex}
+						bgPhoto={makeImagePath(
+							data?.results[0].backdrop_path || ""
+						)}
+					>
+						<Title>{data?.results[0].title}</Title>
+						<Overview>{data?.results[0].overview}</Overview>
+					</Banner>
+					<Slider>
+						<AnimatePresence>
+							<Row
+								key={index}
+								variants={rowVariants}
+								initial="hidden"
+								animate="visible"
+								exit="exit"
+								transition={{ type: "tween", duration: 1 }}
+							>
+								{[1, 2, 3, 4, 5, 6].map((i) => (
+									<Box key={i}>{i}</Box>
+								))}
+							</Row>
+						</AnimatePresence>
+					</Slider>
+				</>
 			)}
 		</Wrapper>
 	);

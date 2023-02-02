@@ -28,10 +28,10 @@ export const GlobalStyle = createGlobalStyle`
  }  
  body {
   height: 120vh;
-  background-color: ${(props) => props.theme.white.lighter};
-  color: ${(props) => props.theme.black.lighter};
-  font-family: NetflixSansRegular, sans-serif;
-  line-height: 1.4;
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  line-height: 1.2;
  }
  a {
   color: inherit;

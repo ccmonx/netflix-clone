@@ -1,5 +1,45 @@
 import { useQuery } from "@tanstack/react-query";
+import styled from "styled-components";
 import { getMoives, IGetMoviesResult } from "../api";
+import { makeImagePath } from "../utils";
+
+const Wrapper = styled.div`
+	background: black;
+`;
+
+const Loader = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 20vh;
+`;
+
+// 🔻 Custom Props → SC로 전달 & 타입 정의
+const Banner = styled.div<{ bgPhoto: string }>`
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 60px;
+	background-image: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0) 70%,
+			rgba(0, 0, 0, 1) 100%
+		),
+		url(${(props) => props.bgPhoto});
+	background-size: cover;
+`;
+
+const Title = styled.h2`
+	font-size: 68px;
+	margin-bottom: 20px;
+`;
+
+const Overview = styled.p`
+	width: 50%;
+	font-size: 30px;
+	text-shadow: 2px 2px 4px rgb(0 0 0 / 45%);
+`;
 
 function Home() {
 	/**
@@ -14,7 +54,22 @@ function Home() {
 		getMoives
 	);
 	console.log(data, isLoading);
-	return <div></div>;
+	return (
+		<Wrapper>
+			{isLoading ? (
+				<Loader>Loading...</Loader>
+			) : (
+				<Banner
+					bgPhoto={makeImagePath(
+						data?.results[0].backdrop_path || ""
+					)}
+				>
+					<Title>{data?.results[0].title}</Title>
+					<Overview>{data?.results[0].overview}</Overview>
+				</Banner>
+			)}
+		</Wrapper>
+	);
 }
 
 export default Home;

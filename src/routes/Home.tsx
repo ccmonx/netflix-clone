@@ -110,6 +110,9 @@ function Home() {
 	 * 1. false 기본값으로 하는 boolean props를 만든다
 	 * 2. 애니메이션을 작동하는 함수가 실행되면 true로 변경
 	 * 3. true → false로 변경하는 함수를 onExitComplete에 연결
+	 *
+	 * 🔻 AnimatePresence Props [true | false]
+	 *  -  initial로 설정된 모션효과를 첫 렌더링때 실행되지 않도록 동작을 차단하기
 	 */
 	const [index, setIndex] = useState(0);
 	const [leaving, setLeaving] = useState(false);
@@ -136,7 +139,10 @@ function Home() {
 						<Overview>{data?.results[0].overview}</Overview>
 					</Banner>
 					<Slider>
-						<AnimatePresence onExitComplete={toggleLeaving}>
+						<AnimatePresence
+							initial={false}
+							onExitComplete={toggleLeaving}
+						>
 							<Row
 								key={index}
 								variants={rowVariants}

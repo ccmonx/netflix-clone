@@ -32,6 +32,7 @@ export const GlobalStyle = createGlobalStyle`
   color: white;
   font-family: sans-serif;
   line-height: 1.2;
+  overflow-x: hidden;
  }
  a {
   color: inherit;

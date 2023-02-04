@@ -85,6 +85,14 @@ const Info = styled(motion.div)`
 	}
 `;
 
+const Overlay = styled(motion.div)`
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+`;
+
 const rowVariants = {
 	hidden: {
 		x: window.outerWidth + 5,
@@ -131,6 +139,10 @@ function Home() {
 	 *  3. useRouteMatch   : 설정한 경로의 데이터 정보를(객체타입) 갖는다
 	 *  4. AnimatePresence : 애니메이션 컴포넌트 만들기
 	 *  5. layoutId        : Box & AnimatePresence 컴포넌트 연결하기
+	 *
+	 *  🔻 Behind the scene - Overlay & BigMovie 컴포넌트
+	 *  1. fragment : Overlay컴포넌트 생성한다
+	 *  2. onOverlayClick : 클릭하면 push로 경로를 변경하여 컴포넌트를 비활성화 시킨다
 	 */
 	const history = useHistory();
 	const bigMovieMatch = useRouteMatch<{ movieId: string }>(
@@ -138,6 +150,9 @@ function Home() {
 	);
 	const onBoxClick = (movieId: number) => {
 		history.push(`/movies/${movieId}`);
+	};
+	const onOverlayClick = () => {
+		history.push("/");
 	};
 	/**
 	 * 🔻 react-query를 사용하여 API Data 불러오기
@@ -257,21 +272,28 @@ function Home() {
 					</Slider>
 					<AnimatePresence>
 						{bigMovieMatch ? (
-							<motion.div
-								layoutId={bigMovieMatch.params.movieId}
-								style={{
-									position: "absolute",
-									top: 50,
-									left: 0,
-									right: 0,
-									margin: "0 auto",
-									width: "40vw",
-									height: "80vh",
-									backgroundColor: "ThreeDDarkShadow",
-								}}
-							>
-								{bigMovieMatch.params.movieId}
-							</motion.div>
+							<div>
+								<motion.div
+									layoutId={bigMovieMatch.params.movieId}
+									style={{
+										position: "absolute",
+										top: 50,
+										left: 0,
+										right: 0,
+										margin: "0 auto",
+										width: "40vw",
+										height: "80vh",
+										backgroundColor: "ThreeDDarkShadow",
+									}}
+								>
+									{bigMovieMatch.params.movieId}
+								</motion.div>
+								<Overlay
+									onClick={onOverlayClick}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+								/>
+							</div>
 						) : null}
 					</AnimatePresence>
 				</>

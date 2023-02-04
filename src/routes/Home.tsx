@@ -91,6 +91,7 @@ const Overlay = styled(motion.div)`
 	width: 100%;
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.5);
+	opacity: 0;
 `;
 
 const BigMovie = styled(motion.div)`
@@ -100,7 +101,31 @@ const BigMovie = styled(motion.div)`
 	margin: 0 auto;
 	width: 40vw;
 	height: 80vh;
-	background-color: ThreeDDarkShadow;
+	border-radius: 15px;
+	overflow: hidden;
+	background-color: ${(props) => props.theme.black.lighter};
+`;
+
+const BigCover = styled.div`
+	width: 100%;
+	height: 400px;
+	background-position: center center;
+	background-size: cover;
+`;
+
+const Bigtitle = styled.h3`
+	position: relative;
+	top: -80px;
+	padding: 20px;
+	font-size: 46px;
+	color: ${(props) => props.theme.white.lighter};
+`;
+
+const BigOverview = styled.p`
+	position: relative;
+	top: -80px;
+	padding: 20px;
+	color: ${(props) => props.theme.white.lighter};
 `;
 
 const rowVariants = {
@@ -176,6 +201,13 @@ function Home() {
 		["movies", "nowPlaying"],
 		getMoives
 	);
+	const clickedMovie =
+		bigMovieMatch?.params.movieId &&
+		data?.results.find(
+			(movie) => movie.id === +bigMovieMatch.params.movieId
+		);
+	console.log("match", bigMovieMatch);
+	console.log("click", clickedMovie);
 	/**
 	 * 🔻 Slider & Animation
 	 * 1. Row index 할당한다 : Row 1 = Box 6
@@ -283,19 +315,36 @@ function Home() {
 					</Slider>
 					<AnimatePresence>
 						{bigMovieMatch ? (
-							<div>
-								<BigMovie
-									style={{ top: scrollY.get() + 100 }}
-									layoutId={bigMovieMatch.params.movieId}
-								>
-									{bigMovieMatch.params.movieId}
-								</BigMovie>
+							<>
 								<Overlay
 									onClick={onOverlayClick}
 									animate={{ opacity: 1 }}
 									exit={{ opacity: 0 }}
 								/>
-							</div>
+								<BigMovie
+									style={{ top: scrollY.get() + 100 }}
+									layoutId={bigMovieMatch.params.movieId}
+								>
+									{clickedMovie && (
+										<>
+											<BigCover
+												style={{
+													backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
+														clickedMovie.backdrop_path,
+														"w500"
+													)})`,
+												}}
+											/>
+											<Bigtitle>
+												{clickedMovie.title}
+											</Bigtitle>
+											<BigOverview>
+												{clickedMovie.overview}
+											</BigOverview>
+										</>
+									)}
+								</BigMovie>
+							</>
 						) : null}
 					</AnimatePresence>
 				</>

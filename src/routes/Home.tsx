@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
@@ -93,6 +93,16 @@ const Overlay = styled(motion.div)`
 	background-color: rgba(0, 0, 0, 0.5);
 `;
 
+const BigMovie = styled(motion.div)`
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	width: 40vw;
+	height: 80vh;
+	background-color: ThreeDDarkShadow;
+`;
+
 const rowVariants = {
 	hidden: {
 		x: window.outerWidth + 5,
@@ -145,6 +155,7 @@ function Home() {
 	 *  2. onOverlayClick : 클릭하면 push로 경로를 변경하여 컴포넌트를 비활성화 시킨다
 	 */
 	const history = useHistory();
+	const { scrollY } = useScroll();
 	const bigMovieMatch = useRouteMatch<{ movieId: string }>(
 		"/movies/:movieId"
 	);
@@ -273,21 +284,12 @@ function Home() {
 					<AnimatePresence>
 						{bigMovieMatch ? (
 							<div>
-								<motion.div
+								<BigMovie
+									style={{ top: scrollY.get() + 100 }}
 									layoutId={bigMovieMatch.params.movieId}
-									style={{
-										position: "absolute",
-										top: 50,
-										left: 0,
-										right: 0,
-										margin: "0 auto",
-										width: "40vw",
-										height: "80vh",
-										backgroundColor: "ThreeDDarkShadow",
-									}}
 								>
 									{bigMovieMatch.params.movieId}
-								</motion.div>
+								</BigMovie>
 								<Overlay
 									onClick={onOverlayClick}
 									animate={{ opacity: 1 }}

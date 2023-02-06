@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -128,10 +128,17 @@ function Header() {
 	 *    - search 컴포넌트 form형식으로 변경
 	 *    - input 컴포넌트에 register 추가
 	 * 3. 데이터 검증 함수(handleSubmit) 연결한다
+	 * 4. useHistory: 클릭없이 다른 페이지로 연결한다(경로설정→그경로로이동)
+	 *
+	 * ↓↓ Search Component
+	 * 5. useLocation : url이 갖고있는 정보를 얻는다
+	 * URLSearchParams()
+	 * 6. parsing : keyword, region
 	 */
+	const history = useHistory();
 	const { register, handleSubmit } = useForm<IForm>();
 	const onValid = (data: IForm) => {
-		console.log(data);
+		history.push(`/search?keyword=${data.keyword}`);
 	};
 
 	// search 아이콘 클릭하면 input 태그를 활성/비활성화 하는 기능

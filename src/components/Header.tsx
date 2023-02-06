@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 const Wrapper = styled(motion.div)`
 	display: flex;
@@ -62,7 +63,7 @@ const Circle = styled(motion.div)`
 	background-color: ${(props) => props.theme.red};
 `;
 
-const Search = styled.div`
+const Search = styled.form`
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -77,6 +78,7 @@ const Input = styled(motion.input)`
 	padding-left: 60px;
 	border: 1px solid ${(props) => props.theme.white.lighter};
 	background-color: black;
+	color: white;
 	line-height: 24px;
 `;
 
@@ -96,6 +98,10 @@ const wrapperVariants = {
 	scroll: { background: "rgba(0,0,0,1)" },
 };
 
+interface IForm {
+	keyword: string;
+}
+
 function Header() {
 	// 🔻 useRouteMatch → 표기한 경로의 정보(path, url, isExact, params)를 객체 형태로 반환한다
 	const homeMatch = useRouteMatch("/");
@@ -114,6 +120,20 @@ function Header() {
 			}
 		});
 	}, [scrollY, wrapperAnimation]);
+	/**
+	 * 🔻 검색 기능(react-hook-form)
+	 * 1. search keyword의 타입을 정의한다
+	 * 2. react-use-form을 사용하여 form 관리한다
+	 * 		- useForm 호출
+	 *    - search 컴포넌트 form형식으로 변경
+	 *    - input 컴포넌트에 register 추가
+	 * 3. 데이터 검증 함수(handleSubmit) 연결한다
+	 */
+	const { register, handleSubmit } = useForm<IForm>();
+	const onValid = (data: IForm) => {
+		console.log(data);
+	};
+
 	// search 아이콘 클릭하면 input 태그를 활성/비활성화 하는 기능
 	// 🔻 useAnimation → 커스텀 모션 구현 hook(아래와 같이 함수 내부의 조건에 맞게 구현할 수 있다)
 	const toggleSearch = () => {
@@ -168,7 +188,7 @@ function Header() {
 				</MenuList>
 			</PrimaryNav>
 			<SecondaryNav>
-				<Search>
+				<Search onSubmit={handleSubmit(onValid)}>
 					<motion.svg
 						onClick={toggleSearch}
 						animate={{ x: searchOpen ? -180 : 0 }}
@@ -186,6 +206,10 @@ function Header() {
 						/>
 					</motion.svg>
 					<Input
+						{...register("keyword", {
+							required: true,
+							minLength: 2,
+						})}
 						animate={inputAnimation}
 						initial={{ scaleX: 0 }}
 						transition={{ type: "linear" }}
